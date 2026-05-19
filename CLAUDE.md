@@ -1,27 +1,63 @@
 # AI Service
 
 ## Project Overview
-LLM 기반 콘텐츠 검사 서비스. 메인 서버(Spring)에서 사용자 입력을
-받아 이 서비스로 보내면, 필요한 AI 활용하여 처리 한다.
+LLM 기반 콘텐츠 검사 서비스.
+
+**역할:** `Spring Boot → AI Service (this) → LLM API`
+
+Spring Boot에서 사용자 입력을 받아 LLM API로 콘텐츠 유해성을 검사하고 결과를 반환한다.
 
 ## Tech Stack
 - Python 3.12
 - FastAPI
-- Pydantic v2
+- Pydantic v2 / pydantic-settings
 - httpx (LLM API 호출, async)
-- pytest (테스트)
+- pytest / pytest-asyncio (테스트)
+- uvicorn (ASGI 서버)
 
-## Coding Conventions
-- 언어에 따른 기본 컨벤션 적용
-- 모든 외부 호출은 async, timeout 필수
-- 요청/응답 스키마는 Pydantic 모델로 정의
-- 로깅은 표준 logging 모듈 사용, print() 금지
+## Project Structure
+```
+app/
+├── main.py          # FastAPI 앱 진입점, 라우터 등록
+├── config.py        # 환경변수 설정 (pydantic-settings)
+├── common/          # 공통 코드
+│   └── exceptions.py
+├── llm/             # LLM 호출 인프라
+│   └── client.py    # Gemini httpx 클라이언트
+├── health/          # 헬스체크 도메인
+│   └── router.py    # GET /health
+└── content/         # 콘텐츠 검사 도메인
+    ├── router.py    # POST /content/check
+    ├── service.py
+    └── schemas.py
+tests/
+```
 
 ## Setup
 ```bash
 source .venv/bin/activate
-pip install -r requirements.txt   # once a requirements file exists
+pip install -r requirements.txt
+
+cp .env.example .env
+# .env에 GEMINI_API_KEY 입력
 ```
+
+## Run
+```bash
+uvicorn app.main:app --reload
+```
+
+## Environment Variables
+| 변수 | 기본값 | 설명 |
+|---|---|---|
+| `GEMINI_API_KEY` | 필수 | Gemini API 키 |
+| `GEMINI_MODEL` | `gemini-2.5-flash` | 사용할 모델명 |
+| `GEMINI_TIMEOUT` | `30` | API 호출 타임아웃 (초) |
+
+## Coding Conventions
+- 모든 외부 호출은 async, timeout 필수
+- 요청/응답 스키마는 Pydantic 모델로 정의
+- 로깅은 표준 logging 모듈 사용, print() 금지
 
 ## Code Style
 - Format with Black before committing.
@@ -34,7 +70,9 @@ pip install -r requirements.txt   # once a requirements file exists
 - 본문은 한 줄 띄우고, 왜 변경했는지 기술
 
 예시:
-feat(ai-service): LLM 응답 파싱 로직 추가
+```
+feat(content): LLM 응답 파싱 로직 추가
 
-OpenAI 응답이 비정형 JSON을 반환하는 경우가 있어
-파싱 실패 시 재시도하도록 변경gi
+Gemini 응답이 markdown 코드블록으로 감싸진 경우가 있어
+파싱 전 전처리 로직 추가
+```
