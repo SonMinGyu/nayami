@@ -2,7 +2,8 @@ from pydantic import BaseModel
 
 
 class ContentCheckRequest(BaseModel):
-    text: str
+    concern_content: str
+    reply_content: str
 
 
 class ContentCheckResponse(BaseModel):
