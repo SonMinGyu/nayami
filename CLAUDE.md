@@ -59,6 +59,11 @@ uvicorn app.main:app --reload
 - 요청/응답 스키마는 Pydantic 모델로 정의
 - 로깅은 표준 logging 모듈 사용, print() 금지
 
+## 협업 규칙
+- 코드를 추가하거나 수정할 때는 변경 내용과 그 이유를 설명할 것
+- 설명 시 문법·개념·동작 원리를 포함하고, 비유나 예시를 활용해 이해하기 쉽게 설명할 것
+- 주석은 핵심 내용이나 코드만으로 의도를 알기 어려운 경우에만 추가하고, 과도한 주석은 지양할 것
+
 ## Code Style
 - Format with Black before committing.
 
