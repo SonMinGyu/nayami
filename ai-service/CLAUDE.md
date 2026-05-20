@@ -18,7 +18,7 @@ Spring Boot에서 사용자 입력을 받아 LLM API로 콘텐츠 유해성을 �
 ## Project Structure
 ```
 app/
-├── main.py          # FastAPI 앱 진입점, 라우터 등록
+├── main.py          # FastAPI 앱 진입점, 라우터 등록, SQS 컨슈머 lifespan 등록
 ├── config.py        # 환경변수 설정 (pydantic-settings)
 ├── common/          # 공통 코드
 │   └── exceptions.py
@@ -26,10 +26,12 @@ app/
 │   └── client.py    # Gemini httpx 클라이언트
 ├── health/          # 헬스체크 도메인
 │   └── router.py    # GET /health
-└── content/         # 콘텐츠 검사 도메인
-    ├── router.py    # POST /content/check
-    ├── service.py
-    └── schemas.py
+├── content/         # 콘텐츠 검사 도메인
+│   ├── router.py    # POST /content/check
+│   ├── service.py
+│   └── schemas.py
+└── sqs/             # SQS 메시지 처리
+    └── consumer.py  # 요청 큐 polling, 결과 큐 발행
 tests/
 ```
 
@@ -53,6 +55,11 @@ uvicorn app.main:app --reload
 | `GEMINI_API_KEY` | 필수 | Gemini API 키 |
 | `GEMINI_MODEL` | `gemini-2.5-flash` | 사용할 모델명 |
 | `GEMINI_TIMEOUT` | `30` | API 호출 타임아웃 (초) |
+| `AWS_ACCESS_KEY_ID` | 필수 | AWS 액세스 키 |
+| `AWS_SECRET_ACCESS_KEY` | 필수 | AWS 시크릿 키 |
+| `AWS_REGION` | `ap-northeast-2` | AWS 리전 |
+| `SQS_REPLY_CHECK_REQUEST_QUEUE_URL` | 필수 | 검사 요청 수신 큐 URL |
+| `SQS_REPLY_CHECK_RESULT_QUEUE_URL` | 필수 | 검사 결과 발행 큐 URL |
 
 ## Coding Conventions
 - 모든 외부 호출은 async, timeout 필수
@@ -76,6 +83,7 @@ uvicorn app.main:app --reload
 - type: feat, fix, refactor, chore, docs, test
 - subject는 한국어로, 명령형/현재형 (예: "사용자 검증 로직 추가")
 - 본문은 한 줄 띄우고, 왜 변경했는지 기술
+- Co-Authored-By 등 공동 작업자 정보는 커밋 메시지에 포함하지 않음
 
 예시:
 ```
