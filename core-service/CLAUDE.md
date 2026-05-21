@@ -19,39 +19,79 @@
 
 ## SQS 연동 구조
 ```
-core-service →  [SQS: reply-check-request] → ai-service
-core-service ←  [SQS: reply-check-result]  ← ai-service
+core-service →  [SQS: nayami-concern-check-request] → ai-service
+core-service ←  [SQS: nayami-concern-check-result]  ← ai-service
+core-service →  [SQS: nayami-reply-check-request]   → ai-service
+core-service ←  [SQS: nayami-reply-check-result]    ← ai-service
 ```
-- 답변 등록 시 `reply_id`, `concern_content`, `reply_content`를 요청 큐에 발행
-- AI Service가 처리 후 `reply_id`, `is_safe`, `reason`을 결과 큐에 발행
-- core-service가 결과 큐를 수신해 DB에 반영
+
+| 큐 | 방향 | 메시지 필드 |
+|---|---|---|
+| `nayami-concern-check-request` | 발행 | `concern_id`, `concern_content` |
+| `nayami-concern-check-result` | 수신 | `concern_id`, `is_safe`, `reason` |
+| `nayami-reply-check-request` | 발행 | `reply_id`, `concern_content`, `reply_content` |
+| `nayami-reply-check-result` | 수신 | `reply_id`, `is_safe`, `reason` |
 
 ## Project Structure
 ```
 src/main/java/com/nayami/server/
 ├── ServerApplication.java
-└── (도메인 추가 예정)
+├── concern/
+│   ├── controller/ConcernController.java
+│   ├── dto/ConcernCreateRequest.java
+│   ├── dto/ConcernResponse.java
+│   ├── entity/Concern.java
+│   ├── entity/ConcernStatus.java          # PENDING / ACTIVE / REJECTED
+│   ├── repository/ConcernRepository.java
+│   └── service/ConcernService.java
+├── reply/
+│   ├── controller/ReplyController.java
+│   ├── dto/ReplyCreateRequest.java
+│   ├── dto/ReplyResponse.java
+│   ├── entity/Reply.java
+│   ├── entity/ReplyStatus.java            # PENDING / SAFE / UNSAFE
+│   ├── repository/ReplyRepository.java
+│   └── service/ReplyService.java
+├── user/
+│   ├── entity/User.java
+│   ├── repository/UserRepository.java
+│   └── service/UserService.java
+├── sqs/
+│   ├── config/SqsProperties.java
+│   ├── consumer/ConcernCheckResultConsumer.java
+│   ├── consumer/ReplyCheckResultConsumer.java
+│   ├── dto/ConcernCheckRequestMessage.java
+│   ├── dto/ConcernCheckResultMessage.java
+│   ├── dto/ReplyCheckRequestMessage.java
+│   ├── dto/ReplyCheckResultMessage.java
+│   ├── publisher/ConcernCheckRequestPublisher.java
+│   ├── publisher/SqsConcernCheckRequestPublisher.java
+│   ├── publisher/ReplyCheckRequestPublisher.java
+│   └── publisher/SqsReplyCheckRequestPublisher.java
+└── global/
+    ├── config/JpaConfig.java
+    ├── config/SqsConfig.java
+    ├── dto/ErrorResponse.java
+    ├── entity/BaseEntity.java
+    ├── exception/GlobalExceptionHandler.java
+    └── exception/NotFoundException.java
+
 src/main/resources/
-└── application.yaml
-src/test/java/com/nayami/server/
+├── application.yaml           # 공통 설정 (AWS, SQS)
+├── application-local.yaml     # 로컬 개발 (H2)
+└── application-prod.yaml      # 운영 (MySQL)
+
+src/test/resources/
+└── application-test.yaml      # 테스트 (H2, SQS 더미)
 ```
 
 ## Setup
 
-### Spring Cloud AWS 의존성 추가
-`build.gradle`에 아직 추가되지 않은 상태. 아래 내용을 수동으로 추가해야 한다.
-
-`dependencyManagement` 블록:
-```groovy
-imports {
-    mavenBom 'io.awspring.cloud:spring-cloud-aws-dependencies:3.3.0'
-}
+### 로컬 실행
+```bash
+./gradlew bootRun --args='--spring.profiles.active=local'
 ```
-
-`dependencies` 블록:
-```groovy
-implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
-```
+H2 콘솔: `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:nayami`, username: `sa`)
 
 ### 빌드
 ```bash
@@ -69,8 +109,10 @@ implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 | `AWS_ACCESS_KEY_ID` | AWS 액세스 키 |
 | `AWS_SECRET_ACCESS_KEY` | AWS 시크릿 키 |
 | `AWS_REGION` | AWS 리전 (기본: ap-northeast-2) |
-| `SQS_REPLY_CHECK_REQUEST_QUEUE_URL` | 검사 요청 발행 큐 URL |
-| `SQS_REPLY_CHECK_RESULT_QUEUE_URL` | 검사 결과 수신 큐 URL |
+| `SQS_CONCERN_CHECK_REQUEST_QUEUE_URL` | 고민 검사 요청 발행 큐 URL |
+| `SQS_CONCERN_CHECK_RESULT_QUEUE_URL` | 고민 검사 결과 수신 큐 URL |
+| `SQS_REPLY_CHECK_REQUEST_QUEUE_URL` | 답변 검사 요청 발행 큐 URL |
+| `SQS_REPLY_CHECK_RESULT_QUEUE_URL` | 답변 검사 결과 수신 큐 URL |
 
 ## Coding Conventions
 - 도메인형 패키지 구조 사용: `com.nayami.server.{domain}.{layer}`
