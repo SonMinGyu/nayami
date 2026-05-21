@@ -26,12 +26,15 @@ app/
 │   └── client.py    # Gemini httpx 클라이언트
 ├── health/          # 헬스체크 도메인
 │   └── router.py    # GET /health
-├── content/         # 콘텐츠 검사 도메인
-│   ├── router.py    # POST /content/check
+├── reply/           # 답변 검사 도메인
+│   ├── router.py    # POST /reply/check
+│   ├── service.py
+│   └── schemas.py
+├── concern/         # 고민 검사 도메인
 │   ├── service.py
 │   └── schemas.py
 └── sqs/             # SQS 메시지 처리
-    └── consumer.py  # 요청 큐 polling, 결과 큐 발행
+    └── consumer.py  # 답변·고민 요청 큐 polling, 결과 큐 발행
 tests/
 ```
 
@@ -58,8 +61,10 @@ uvicorn app.main:app --reload
 | `AWS_ACCESS_KEY_ID` | 필수 | AWS 액세스 키 |
 | `AWS_SECRET_ACCESS_KEY` | 필수 | AWS 시크릿 키 |
 | `AWS_REGION` | `ap-northeast-2` | AWS 리전 |
-| `SQS_REPLY_CHECK_REQUEST_QUEUE_URL` | 필수 | 검사 요청 수신 큐 URL |
-| `SQS_REPLY_CHECK_RESULT_QUEUE_URL` | 필수 | 검사 결과 발행 큐 URL |
+| `SQS_REPLY_CHECK_REQUEST_QUEUE_URL` | 필수 | 답변 검사 요청 수신 큐 URL |
+| `SQS_REPLY_CHECK_RESULT_QUEUE_URL` | 필수 | 답변 검사 결과 발행 큐 URL |
+| `SQS_CONCERN_CHECK_REQUEST_QUEUE_URL` | 필수 | 고민 검사 요청 수신 큐 URL |
+| `SQS_CONCERN_CHECK_RESULT_QUEUE_URL` | 필수 | 고민 검사 결과 발행 큐 URL |
 
 ## Coding Conventions
 - 모든 외부 호출은 async, timeout 필수
