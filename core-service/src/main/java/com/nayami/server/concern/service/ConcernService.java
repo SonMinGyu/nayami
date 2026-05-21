@@ -10,6 +10,7 @@ import com.nayami.server.sqs.dto.ConcernCheckRequestMessage;
 import com.nayami.server.sqs.publisher.ConcernCheckRequestPublisher;
 import com.nayami.server.user.entity.User;
 import com.nayami.server.user.service.UserService;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,8 @@ public class ConcernService {
 
   @Transactional(readOnly = true)
   public List<ConcernResponse> findAll() {
-    return concernRepository.findAllByStatus(ConcernStatus.ACTIVE).stream()
+    LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    return concernRepository.findVisible(ConcernStatus.ACTIVE, twoWeeksAgo).stream()
         .map(ConcernResponse::from)
         .toList();
   }
