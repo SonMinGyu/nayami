@@ -44,8 +44,11 @@ public class ReplyService {
 
   @Transactional
   public void handleCheckResult(Long replyId, boolean isSafe, String reason) {
-    Reply reply = replyRepository.findById(replyId)
+    Reply reply = replyRepository.findByIdWithConcern(replyId)
         .orElseThrow(() -> new NotFoundException("존재하지 않는 답변입니다. id=" + replyId));
     reply.updateCheckResult(isSafe, reason);
+    if (isSafe) {
+      reply.getConcern().recordSafeReply();
+    }
   }
 }
