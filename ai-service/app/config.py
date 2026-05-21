@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     aws_region: str = "ap-northeast-2"
     sqs_reply_check_request_queue_url: str
     sqs_reply_check_result_queue_url: str
+    sqs_concern_check_request_queue_url: str
+    sqs_concern_check_result_queue_url: str
 
     model_config = {"env_file": str(_ENV_FILE)}
 
