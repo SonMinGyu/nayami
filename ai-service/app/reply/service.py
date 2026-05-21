@@ -1,7 +1,7 @@
 import json
 import logging
 
-from app.content.schemas import ContentCheckRequest, ContentCheckResponse
+from app.reply.schemas import ReplyCheckRequest, ReplyCheckResponse
 from app.llm.client import gemini_client
 
 logger = logging.getLogger(__name__)
@@ -25,8 +25,8 @@ _PROMPT_TEMPLATE = """아래 고민 글에 대한 답변을 검토해주세요. 
 {{"is_safe": true/false, "reason": "판단 이유"}}"""
 
 
-class ContentService:
-    async def check(self, request: ContentCheckRequest) -> ContentCheckResponse:
+class ReplyService:
+    async def check(self, request: ReplyCheckRequest) -> ReplyCheckResponse:
         prompt = _PROMPT_TEMPLATE.format(
             concern_content=request.concern_content,
             reply_content=request.reply_content,
@@ -35,7 +35,7 @@ class ContentService:
 
         raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
         data = json.loads(raw)
-        return ContentCheckResponse(**data)
+        return ReplyCheckResponse(**data)
 
 
-content_service = ContentService()
+reply_service = ReplyService()

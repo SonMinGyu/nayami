@@ -7,8 +7,8 @@ import aioboto3
 from app.config import settings
 from app.concern.schemas import ConcernCheckRequest
 from app.concern.service import concern_service
-from app.content.schemas import ContentCheckRequest
-from app.content.service import content_service
+from app.reply.schemas import ReplyCheckRequest
+from app.reply.service import reply_service
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,11 @@ async def _process_reply(sqs, message: dict) -> None:
     body = json.loads(message["Body"])
     reply_id = body["reply_id"]
 
-    request = ContentCheckRequest(
+    request = ReplyCheckRequest(
         concern_content=body["concern_content"],
         reply_content=body["reply_content"],
     )
-    result = await content_service.check(request)
+    result = await reply_service.check(request)
 
     await sqs.send_message(
         QueueUrl=settings.sqs_reply_check_result_queue_url,

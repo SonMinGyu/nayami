@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.content.router import router as content_router
+from app.reply.router import router as reply_router
 from app.health.router import router as health_router
 from app.sqs.consumer import start_concern_consumer, start_reply_consumer
 
@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="AI Service", lifespan=lifespan)
 
 app.include_router(health_router)
-app.include_router(content_router, prefix="/content")
+app.include_router(reply_router, prefix="/reply")
 
 if __name__ == "__main__":
     import uvicorn

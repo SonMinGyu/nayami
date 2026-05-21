@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 
 
-class ContentCheckRequest(BaseModel):
+class ReplyCheckRequest(BaseModel):
     concern_content: str = Field(min_length=1)
     reply_content: str = Field(min_length=1)
 
@@ -13,6 +13,6 @@ class ContentCheckRequest(BaseModel):
         return v
 
 
-class ContentCheckResponse(BaseModel):
+class ReplyCheckResponse(BaseModel):
     is_safe: bool
     reason: str
