@@ -77,6 +77,10 @@ uvicorn app.main:app --reload
 ## Code Style
 - Format with Black before committing.
 
+## Git 규칙
+- 커밋과 푸시는 ai-service 디렉토리 내 변경사항만 대상으로 한다
+- `git add` 시 `ai-service/` 경로 밖의 파일(예: `core-service/`)은 포함하지 않는다
+
 ## Git 컨벤션
 ### 커밋 메시지
 - Conventional Commits 형식 사용: `<type>(<scope>): <subject>`
