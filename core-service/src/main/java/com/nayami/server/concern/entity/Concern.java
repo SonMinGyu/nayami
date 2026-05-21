@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,15 +39,28 @@ public class Concern extends BaseEntity {
   @Column(nullable = false)
   private ConcernStatus status;
 
+  @Column(nullable = false)
+  private int safeReplyCount;
+
+  private LocalDateTime firstSafeReplyAt;
+
   public static Concern of(User author, String content) {
     Concern concern = new Concern();
     concern.author = author;
     concern.content = content;
     concern.status = ConcernStatus.PENDING;
+    concern.safeReplyCount = 0;
     return concern;
   }
 
   public void updateCheckResult(boolean isSafe) {
     this.status = isSafe ? ConcernStatus.ACTIVE : ConcernStatus.REJECTED;
+  }
+
+  public void recordSafeReply() {
+    if (this.firstSafeReplyAt == null) {
+      this.firstSafeReplyAt = LocalDateTime.now();
+    }
+    this.safeReplyCount++;
   }
 }
