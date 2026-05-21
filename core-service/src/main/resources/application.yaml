@@ -1,3 +1,19 @@
 spring:
   application:
-    name: server
+    name: core-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+      region:
+        static: ${AWS_REGION:ap-northeast-2}
+
+sqs:
+  concern-check-request-queue-url: ${SQS_CONCERN_CHECK_REQUEST_QUEUE_URL}
+  concern-check-result-queue-url: ${SQS_CONCERN_CHECK_RESULT_QUEUE_URL}
+  reply-check-request-queue-url: ${SQS_REPLY_CHECK_REQUEST_QUEUE_URL}
+  reply-check-result-queue-url: ${SQS_REPLY_CHECK_RESULT_QUEUE_URL}
