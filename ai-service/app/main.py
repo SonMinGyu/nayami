@@ -5,19 +5,17 @@ from fastapi import FastAPI
 
 from app.content.router import router as content_router
 from app.health.router import router as health_router
-from app.sqs.consumer import start_consumer
+from app.sqs.consumer import start_concern_consumer, start_reply_consumer
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    task = start_consumer()
+    reply_task = start_reply_consumer()
+    concern_task = start_concern_consumer()
     yield
-    # 앱 종료 시 SQS 컨슈머 정상 종료
-    task.cancel()
-    try:
-        await task
-    except asyncio.CancelledError:
-        pass
+    reply_task.cancel()
+    concern_task.cancel()
+    await asyncio.gather(reply_task, concern_task, return_exceptions=True)
 
 
 app = FastAPI(title="AI Service", lifespan=lifespan)
