@@ -46,16 +46,16 @@ async def _process_reply(sqs, message: dict) -> None:
 
 async def _process_concern(sqs, message: dict) -> None:
     body = json.loads(message["Body"])
-    concern_id = body["concernId"]
+    concern_id = body["concern_id"]
 
-    request = ConcernCheckRequest(concern_content=body["concernContent"])
+    request = ConcernCheckRequest(concern_content=body["concern_content"])
     result = await concern_service.check(request)
 
     await sqs.send_message(
         QueueUrl=settings.sqs_concern_check_result_queue_url,
         MessageBody=json.dumps({
-            "concernId": concern_id,
-            "isSafe": result.is_safe,
+            "concern_id": concern_id,
+            "is_safe": result.is_safe,
             "reason": result.reason,
         }),
     )
