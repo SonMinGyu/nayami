@@ -91,6 +91,10 @@ implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 - 포맷은 IDE formatter 사용
 
 ## Git 컨벤션
+### 커밋 및 푸시 범위
+- 이 프로젝트는 모노레포(`nayami/`) 안에 위치하지만, **커밋과 푸시는 core-service 변경사항만** 대상으로 한다
+- `git add` 시 `core-service/` 경로 밖의 파일(예: `ai-service/`)은 포함하지 않는다
+
 ### 커밋 메시지
 - Conventional Commits 형식 사용: `<type>(<scope>): <subject>`
 - type: feat, fix, refactor, chore, docs, test
