@@ -32,15 +32,17 @@ public class ReplyService {
   private final OutboxEventRepository outboxEventRepository;
   private final ObjectMapper objectMapper;
 
+  // 인증된 사용자를 조회하고 지정된 고민에 답변을 저장한다.
   @Transactional
-  public ReplyResponse create(Long concernId, ReplyCreateRequest request) {
+  public ReplyResponse create(Long userId, Long concernId, ReplyCreateRequest request) {
     Concern concern = concernRepository.findById(concernId)
         .orElseThrow(() -> new NotFoundException("존재하지 않는 고민입니다. id=" + concernId));
-    User author = userService.findOrCreate(request.nickname(), request.email());
+    User author = userService.findById(userId);
     Reply reply = replyRepository.save(Reply.of(concern, author, request.content()));
     return ReplyResponse.from(reply);
   }
 
+  // AI 서비스에 답변 내용 유해성 검사를 요청하는 SQS 메시지를 발행한다.
   // 트랜잭션 밖에서 호출 — DB 커밋 이후 SQS 발행 보장
   public void publishCheckRequest(ReplyResponse reply, String concernContent) {
     replyCheckRequestPublisher.publish(new ReplyCheckRequestMessage(
@@ -50,6 +52,7 @@ public class ReplyService {
     ));
   }
 
+  // AI 서비스의 검사 결과를 받아 답변 상태를 업데이트하고, 안전한 답변이면 이메일 알림 Outbox 이벤트를 저장한다.
   @Transactional
   public void handleCheckResult(Long replyId, boolean isSafe, String reason) {
     Reply reply = replyRepository.findByIdWithConcern(replyId)
@@ -61,6 +64,7 @@ public class ReplyService {
     }
   }
 
+  // 고민 작성자에게 보낼 이메일 알림 정보를 직렬화해 Outbox 이벤트로 저장한다.
   private void saveEmailOutboxEvent(Reply reply) {
     try {
       String payload = objectMapper.writeValueAsString(new EmailNotificationPayload(

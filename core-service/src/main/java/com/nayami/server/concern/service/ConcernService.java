@@ -24,13 +24,15 @@ public class ConcernService {
   private final UserService userService;
   private final ConcernCheckRequestPublisher concernCheckRequestPublisher;
 
+  // 인증된 사용자를 조회하고 고민을 저장한다.
   @Transactional
-  public ConcernResponse create(ConcernCreateRequest request) {
-    User author = userService.findOrCreate(request.nickname(), request.email());
+  public ConcernResponse create(Long userId, ConcernCreateRequest request) {
+    User author = userService.findById(userId);
     Concern concern = concernRepository.save(Concern.of(author, request.content()));
     return ConcernResponse.from(concern);
   }
 
+  // AI 서비스에 고민 내용 유해성 검사를 요청하는 SQS 메시지를 발행한다.
   // 트랜잭션 밖에서 호출 — DB 커밋 이후 SQS 발행 보장
   public void publishCheckRequest(ConcernResponse concern) {
     concernCheckRequestPublisher.publish(
@@ -38,6 +40,7 @@ public class ConcernService {
     );
   }
 
+  // AI 서비스의 검사 결과를 받아 고민 상태를 업데이트한다.
   @Transactional
   public void handleCheckResult(Long concernId, boolean isSafe) {
     Concern concern = concernRepository.findById(concernId)
@@ -45,6 +48,7 @@ public class ConcernService {
     concern.updateCheckResult(isSafe);
   }
 
+  // 2주 이내에 등록된 활성 상태의 고민 목록을 조회한다.
   @Transactional(readOnly = true)
   public List<ConcernResponse> findAll() {
     LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
@@ -53,6 +57,7 @@ public class ConcernService {
         .toList();
   }
 
+  // ID로 고민을 조회한다.
   @Transactional(readOnly = true)
   public ConcernResponse findById(Long id) {
     Concern concern = concernRepository.findById(id)

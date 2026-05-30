@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,10 +25,11 @@ public class ReplyController {
 
   @PostMapping("/{concernId}/replies")
   public ResponseEntity<ReplyResponse> create(
+      @AuthenticationPrincipal Long userId,
       @PathVariable Long concernId,
       @Valid @RequestBody ReplyCreateRequest request
   ) {
-    ReplyResponse reply = replyService.create(concernId, request);
+    ReplyResponse reply = replyService.create(userId, concernId, request);
     String concernContent = concernService.findById(concernId).content();
     replyService.publishCheckRequest(reply, concernContent);
     return ResponseEntity.status(HttpStatus.CREATED).body(reply);
