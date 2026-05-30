@@ -26,3 +26,8 @@ sqs:
   reply-check-request-queue-url: https://sqs.ap-northeast-2.amazonaws.com/000000000000/test-reply-request
   reply-check-result-queue-url: https://sqs.ap-northeast-2.amazonaws.com/000000000000/test-reply-result
   email-notification-queue-url: https://sqs.ap-northeast-2.amazonaws.com/000000000000/test-email-notification
+
+jwt:
+  secret: test-jwt-secret-key-must-be-at-least-32-bytes-long
+  access-token-expiry: 3600000
+  refresh-token-expiry: 604800000

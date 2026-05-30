@@ -4,6 +4,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
@@ -29,3 +33,8 @@ sqs:
   reply-check-request-queue-url: ${SQS_REPLY_CHECK_REQUEST_QUEUE_URL}
   reply-check-result-queue-url: ${SQS_REPLY_CHECK_RESULT_QUEUE_URL}
   email-notification-queue-url: ${SQS_EMAIL_NOTIFICATION_QUEUE_URL}
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiry: 3600000
+  refresh-token-expiry: 604800000
