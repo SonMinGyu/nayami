@@ -36,6 +36,12 @@ public class JwtProvider {
     return Long.parseLong(parseClaims(token).getSubject());
   }
 
+  // 토큰 만료 시각까지 남은 시간(ms) — 블랙리스트 TTL을 잔여 만료시간으로 설정해
+  // 토큰이 자연 만료된 이후에도 Redis 항목이 남아 메모리를 낭비하지 않도록 한다.
+  public long getRemainingExpiry(String token) {
+    return parseClaims(token).getExpiration().getTime() - System.currentTimeMillis();
+  }
+
   public boolean validate(String token) {
     try {
       parseClaims(token);

@@ -17,6 +17,31 @@ public class MailService {
   @Value("${spring.mail.username}")
   private String fromEmail;
 
+  public void sendSignupOtp(String toEmail, String otp) {
+    sendOtpEmail(toEmail, "나야미 - 회원가입 인증 코드", otp);
+  }
+
+  public void sendLoginOtp(String toEmail, String otp) {
+    sendOtpEmail(toEmail, "나야미 - 로그인 인증 코드", otp);
+  }
+
+  private void sendOtpEmail(String toEmail, String subject, String otp) {
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setFrom(fromEmail);
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText("""
+        나야미 이메일 인증 코드입니다.
+
+        인증 코드: %s
+
+        인증 코드는 5분간 유효합니다.
+        본인이 요청하지 않은 경우 이 메일을 무시하세요.
+        """.formatted(otp));
+    mailSender.send(message);
+    log.info("OTP 이메일 발송 완료: to={}", toEmail);
+  }
+
   public void sendReplyNotification(String toEmail, String nickname, String concernContent, String replyContent) {
     SimpleMailMessage message = new SimpleMailMessage();
     message.setFrom(fromEmail);
