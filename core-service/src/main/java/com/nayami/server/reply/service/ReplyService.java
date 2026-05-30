@@ -1,8 +1,14 @@
 package com.nayami.server.reply.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nayami.server.concern.entity.Concern;
 import com.nayami.server.concern.repository.ConcernRepository;
 import com.nayami.server.global.exception.NotFoundException;
+import com.nayami.server.global.outbox.EmailNotificationPayload;
+import com.nayami.server.global.outbox.OutboxEvent;
+import com.nayami.server.global.outbox.OutboxEventRepository;
+import com.nayami.server.global.outbox.OutboxEventType;
 import com.nayami.server.reply.dto.ReplyCreateRequest;
 import com.nayami.server.reply.dto.ReplyResponse;
 import com.nayami.server.reply.entity.Reply;
@@ -23,6 +29,8 @@ public class ReplyService {
   private final ConcernRepository concernRepository;
   private final UserService userService;
   private final ReplyCheckRequestPublisher replyCheckRequestPublisher;
+  private final OutboxEventRepository outboxEventRepository;
+  private final ObjectMapper objectMapper;
 
   @Transactional
   public ReplyResponse create(Long concernId, ReplyCreateRequest request) {
@@ -49,6 +57,21 @@ public class ReplyService {
     reply.updateCheckResult(isSafe, reason);
     if (isSafe) {
       reply.getConcern().recordSafeReply();
+      saveEmailOutboxEvent(reply);
+    }
+  }
+
+  private void saveEmailOutboxEvent(Reply reply) {
+    try {
+      String payload = objectMapper.writeValueAsString(new EmailNotificationPayload(
+          reply.getConcern().getAuthor().getEmail(),
+          reply.getConcern().getAuthor().getNickname(),
+          reply.getConcern().getContent(),
+          reply.getContent()
+      ));
+      outboxEventRepository.save(OutboxEvent.pending(OutboxEventType.REPLY_MAIL_NOTIFICATION_EVENT, payload));
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Outbox 이벤트 payload 직렬화 실패", e);
     }
   }
 }

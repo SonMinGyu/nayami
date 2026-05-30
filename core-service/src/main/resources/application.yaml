@@ -4,6 +4,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   cloud:
     aws:
       credentials:
@@ -17,3 +28,4 @@ sqs:
   concern-check-result-queue-url: ${SQS_CONCERN_CHECK_RESULT_QUEUE_URL}
   reply-check-request-queue-url: ${SQS_REPLY_CHECK_REQUEST_QUEUE_URL}
   reply-check-result-queue-url: ${SQS_REPLY_CHECK_RESULT_QUEUE_URL}
+  email-notification-queue-url: ${SQS_EMAIL_NOTIFICATION_QUEUE_URL}

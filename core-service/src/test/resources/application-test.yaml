@@ -1,4 +1,7 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
   datasource:
     url: jdbc:h2:mem:nayami-test
     driver-class-name: org.h2.Driver
@@ -22,3 +25,4 @@ sqs:
   concern-check-result-queue-url: https://sqs.ap-northeast-2.amazonaws.com/000000000000/test-concern-result
   reply-check-request-queue-url: https://sqs.ap-northeast-2.amazonaws.com/000000000000/test-reply-request
   reply-check-result-queue-url: https://sqs.ap-northeast-2.amazonaws.com/000000000000/test-reply-result
+  email-notification-queue-url: https://sqs.ap-northeast-2.amazonaws.com/000000000000/test-email-notification
