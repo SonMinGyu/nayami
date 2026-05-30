@@ -39,3 +39,6 @@ out/
 ### Env ###
 .env
 src/main/resources/application-local.yaml
+
+### Claude ###
+CLAUDE.md
