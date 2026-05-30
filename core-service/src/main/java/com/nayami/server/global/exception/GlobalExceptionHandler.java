@@ -18,6 +18,30 @@ public class GlobalExceptionHandler {
         .body(ErrorResponse.of(HttpStatus.NOT_FOUND.value(), e.getMessage()));
   }
 
+  @ExceptionHandler(ConflictException.class)
+  public ResponseEntity<ErrorResponse> handleConflictException(ConflictException e) {
+    return ResponseEntity.status(HttpStatus.CONFLICT)
+        .body(ErrorResponse.of(HttpStatus.CONFLICT.value(), e.getMessage()));
+  }
+
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+  }
+
+  @ExceptionHandler(TooManyRequestsException.class)
+  public ResponseEntity<ErrorResponse> handleTooManyRequestsException(TooManyRequestsException e) {
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+        .body(ErrorResponse.of(HttpStatus.TOO_MANY_REQUESTS.value(), e.getMessage()));
+  }
+
+  @ExceptionHandler(UnauthorizedException.class)
+  public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(ErrorResponse.of(HttpStatus.UNAUTHORIZED.value(), e.getMessage()));
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
     String message = e.getBindingResult().getFieldErrors().stream()
