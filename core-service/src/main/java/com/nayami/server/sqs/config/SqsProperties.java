@@ -7,7 +7,8 @@ public record SqsProperties(
     String concernCheckRequestQueueUrl,
     String concernCheckResultQueueUrl,
     String replyCheckRequestQueueUrl,
-    String replyCheckResultQueueUrl
+    String replyCheckResultQueueUrl,
+    String emailNotificationQueueUrl
 ) {
 
 }
