@@ -3,7 +3,6 @@ package com.nayami.server.concern.service;
 import com.nayami.server.concern.dto.ConcernCreateRequest;
 import com.nayami.server.concern.dto.ConcernResponse;
 import com.nayami.server.concern.entity.Concern;
-import com.nayami.server.concern.entity.ConcernStatus;
 import com.nayami.server.concern.repository.ConcernRepository;
 import com.nayami.server.global.exception.NotFoundException;
 import com.nayami.server.sqs.dto.ConcernCheckRequestMessage;
@@ -11,7 +10,7 @@ import com.nayami.server.sqs.publisher.ConcernCheckRequestPublisher;
 import com.nayami.server.user.entity.User;
 import com.nayami.server.user.service.UserService;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,20 +47,20 @@ public class ConcernService {
     concern.updateCheckResult(isSafe);
   }
 
-  // 2주 이내에 등록된 활성 상태의 고민 목록을 조회한다.
-  @Transactional(readOnly = true)
-  public List<ConcernResponse> findAll() {
-    LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
-    return concernRepository.findVisible(ConcernStatus.ACTIVE, twoWeeksAgo).stream()
-        .map(ConcernResponse::from)
-        .toList();
-  }
-
-  // ID로 고민을 조회한다.
+  // ID로 고민을 조회한다. 내부 로직(SQS 발행 등)에서 상태 무관하게 사용한다.
   @Transactional(readOnly = true)
   public ConcernResponse findById(Long id) {
     Concern concern = concernRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("존재하지 않는 고민입니다. id=" + id));
     return ConcernResponse.from(concern);
+  }
+
+  // 인증된 사용자에게 보여줄 랜덤 고민 1건을 조회한다.
+  // 본인 고민, 이미 답변한 고민, 노출 조건 미충족 고민은 제외한다.
+  @Transactional(readOnly = true)
+  public Optional<ConcernResponse> findRandom(Long userId) {
+    LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    return concernRepository.findRandom(twoWeeksAgo, userId)
+        .map(ConcernResponse::from);
   }
 }
