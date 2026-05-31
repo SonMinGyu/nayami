@@ -1,7 +1,6 @@
 package com.nayami.server.reply.dto;
 
 import com.nayami.server.reply.entity.Reply;
-import com.nayami.server.reply.entity.ReplyStatus;
 import java.time.LocalDateTime;
 
 public record ReplyResponse(
@@ -9,7 +8,6 @@ public record ReplyResponse(
     Long concernId,
     String nickname,
     String content,
-    ReplyStatus status,
     LocalDateTime createdAt
 ) {
 
@@ -19,7 +17,6 @@ public record ReplyResponse(
         reply.getConcern().getId(),
         reply.getAuthor().getNickname(),
         reply.getContent(),
-        reply.getStatus(),
         reply.getCreatedAt()
     );
   }
