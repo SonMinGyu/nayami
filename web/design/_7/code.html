@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nayami - Signup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#87736c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#54433d",
+                        "tertiary-container": "#a28f80",
+                        "on-background": "#1b1c1a",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#6f3800",
+                        "inverse-on-surface": "#f2f0ed",
+                        "on-primary-fixed": "#380d00",
+                        "secondary-fixed": "#ffdcc4",
+                        "on-tertiary-container": "#36291e",
+                        "secondary-container": "#ffab69",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#25190f",
+                        "tertiary-fixed-dim": "#d8c3b3",
+                        "tertiary-fixed": "#f5dece",
+                        "surface-dim": "#dbdad6",
+                        "on-primary-fixed-variant": "#753319",
+                        "primary-container": "#d27c5c",
+                        "surface-container-low": "#f5f3ef",
+                        "primary-fixed": "#ffdbcf",
+                        "on-secondary-container": "#783d01",
+                        "surface-container-highest": "#e4e2de",
+                        "surface-bright": "#fbf9f5",
+                        "inverse-surface": "#30312e",
+                        "primary": "#934a2e",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1c1a",
+                        "on-secondary-fixed": "#2f1400",
+                        "background": "#fbf9f5",
+                        "surface-container-high": "#eae8e4",
+                        "primary-fixed-dim": "#ffb59b",
+                        "surface-variant": "#e4e2de",
+                        "on-tertiary-fixed-variant": "#534438",
+                        "on-primary-container": "#511902",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb59b",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#ffb780",
+                        "surface": "#fbf9f5",
+                        "surface-container": "#efeeea",
+                        "tertiary": "#6c5b4e",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#934a2e",
+                        "secondary": "#8e4e14",
+                        "outline-variant": "#dac1ba",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-sm": "1rem",
+                        "section-padding": "80px",
+                        "container-max-width": "720px",
+                        "margin-xs": "0.5rem",
+                        "unit": "8px",
+                        "margin-md": "2rem",
+                        "margin-lg": "4rem",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "1.5", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            /* Prevent overscroll bounce on mobile to maintain app-like feel */
+            overscroll-behavior-y: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-background min-h-screen flex justify-center antialiased">
+<!-- Main Mobile/Web Container -->
+<main class="w-full max-w-container-max-width min-h-screen flex flex-col relative shadow-[0_0_40px_rgba(147,74,46,0.03)] bg-surface"><div class="absolute inset-0 pointer-events-none -z-0 overflow-hidden"><img alt="" class="w-full h-full object-cover opacity-40" src="https://lh3.googleusercontent.com/aida/ADBb0ugxm16ns6CzrqZTQxJA0p0a5P0vZX-wukPVisNqIpNTP6EJM51Z-NIJ6Uaxl2aSMB6KoP8yQufVLioR9xT3tYdShSesuIDEe4ooI09vPNbUpKja8GJFWGo_Fzz7J7TJIYOwtWp1bsFc41vD_Yh2qag-5g1esNLtVq9KVNFIdYihlm4bt0W5fDylYuR3PedIlWMFvrOQmjpR6NBO87L2xWtcjn1Ywyy_miFGJrTWVeZK-l8gexIwiMot8UY"/></div>
+<!-- Transactional Top Bar (Suppressed Shell applied, custom minimal header) -->
+<header class="flex items-center px-margin-sm h-16 shrink-0 w-full z-10 relative">
+<button aria-label="Go back" class="p-2 -ml-2 rounded-full hover:bg-surface-container transition-colors text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface group">
+<span class="material-symbols-outlined text-[24px] group-active:scale-90 transition-transform">arrow_back</span>
+</button>
+</header>
+<!-- Scrollable Content Area -->
+<div class="flex-1 flex flex-col px-margin-sm pt-margin-lg pb-[120px] overflow-y-auto z-10">
+<!-- Typography Headers -->
+<div class="flex flex-col gap-2 mb-10">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-display-lg md:text-display-lg text-on-background tracking-tight">
+                    반가워요!
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                    가입할 이메일을 입력해주세요
+                </p>
+</div>
+<!-- Input Form Area -->
+<div class="flex flex-col w-full">
+<label class="sr-only" for="email-input">이메일 주소</label>
+<div class="relative flex items-center group">
+<input class="w-full bg-surface-container-lowest border border-outline/40 rounded-xl px-4 py-4 font-body-md text-body-md text-on-background placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300 shadow-[0_4px_20px_0_rgba(147,74,46,0.02)] group-focus-within:shadow-[0_8px_30px_0_rgba(147,74,46,0.06)]" id="email-input" placeholder="email@example.com" type="email"/>
+</div>
+</div>
+</div>
+<!-- Fixed Bottom Action Area -->
+<div class="absolute bottom-0 left-0 w-full p-margin-sm pb-8 bg-gradient-to-t from-surface via-surface/90 to-transparent pt-8 z-10">
+<button class="w-full bg-primary text-on-primary font-label-sm text-label-sm py-4 px-6 rounded-full flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-[0_8px_20px_0_rgba(147,74,46,0.15)] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface">
+<span class="">인증 코드 받기</span>
+</button>
+</div>
+</main>
+<script>
+        // Optional micro-interaction: Focus input on load for immediate typing readiness on desktop, 
+        // but maybe omit on mobile to prevent unwanted keyboard popups immediately.
+        document.addEventListener('DOMContentLoaded', () => {
+            const emailInput = document.getElementById('email-input');
+            // Simple check to focus only on wider screens where keyboard isn't as intrusive
+            if (window.innerWidth > 768 && emailInput) {
+                setTimeout(() => emailInput.focus(), 300);
+            }
+        });
+    </script>
+</body></html>

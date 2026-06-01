@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nayami - 고민 던지기</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Be+Vietnam+Pro:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#87736c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#54433d",
+                        "tertiary-container": "#a28f80",
+                        "on-background": "#1b1c1a",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#6f3800",
+                        "inverse-on-surface": "#f2f0ed",
+                        "on-primary-fixed": "#380d00",
+                        "secondary-fixed": "#ffdcc4",
+                        "on-tertiary-container": "#36291e",
+                        "secondary-container": "#ffab69",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#25190f",
+                        "tertiary-fixed-dim": "#d8c3b3",
+                        "tertiary-fixed": "#f5dece",
+                        "surface-dim": "#dbdad6",
+                        "on-primary-fixed-variant": "#753319",
+                        "primary-container": "#d27c5c",
+                        "surface-container-low": "#f5f3ef",
+                        "primary-fixed": "#ffdbcf",
+                        "on-secondary-container": "#783d01",
+                        "surface-container-highest": "#e4e2de",
+                        "surface-bright": "#fbf9f5",
+                        "inverse-surface": "#30312e",
+                        "primary": "#934a2e",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1c1a",
+                        "on-secondary-fixed": "#2f1400",
+                        "background": "#fbf9f5",
+                        "surface-container-high": "#eae8e4",
+                        "primary-fixed-dim": "#ffb59b",
+                        "surface-variant": "#e4e2de",
+                        "on-tertiary-fixed-variant": "#534438",
+                        "on-primary-container": "#511902",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb59b",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#ffb780",
+                        "surface": "#fbf9f5",
+                        "surface-container": "#efeeea",
+                        "tertiary": "#6c5b4e",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#934a2e",
+                        "secondary": "#8e4e14",
+                        "outline-variant": "#dac1ba",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-sm": "1rem",
+                        "section-padding": "80px",
+                        "container-max-width": "720px",
+                        "margin-xs": "0.5rem",
+                        "unit": "8px",
+                        "margin-md": "2rem",
+                        "margin-lg": "4rem",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "1.5", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Hide scrollbar for clean writing experience */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        .ambient-shadow {
+            box-shadow: 0 4px 20px 0 rgba(147, 74, 46, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container"><div class="fixed inset-0 z-[-1] pointer-events-none opacity-80" style='background-image: url("https://lh3.googleusercontent.com/aida/ADBb0ugxm16ns6CzrqZTQxJA0p0a5P0vZX-wukPVisNqIpNTP6EJM51Z-NIJ6Uaxl2aSMB6KoP8yQufVLioR9xT3tYdShSesuIDEe4ooI09vPNbUpKja8GJFWGo_Fzz7J7TJIYOwtWp1bsFc41vD_Yh2qag-5g1esNLtVq9KVNFIdYihlm4bt0W5fDylYuR3PedIlWMFvrOQmjpR6NBO87L2xWtcjn1Ywyy_miFGJrTWVeZK-l8gexIwiMot8UY"); background-size: cover; background-position: center center; background-repeat: no-repeat;'></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-sm h-16 max-w-container-max-width mx-auto bg-surface/80 dark:bg-surface/80 backdrop-blur-md">
+<button aria-label="Go back" class="w-12 h-12 flex items-center justify-start text-on-surface-variant hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back</span>
+</button>
+<div class="flex-1 flex justify-center">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">고민 던지기</h1>
+</div>
+<div class="w-12 h-12"></div> <!-- Spacer for centering -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col w-full max-w-container-max-width mx-auto px-margin-sm pt-[80px] pb-[100px] relative">
+<!-- Writing Area Container -->
+<div class="flex-1 flex flex-col bg-surface-container-lowest rounded-xl ambient-shadow p-6 md:p-8 relative">
+<textarea class="w-full h-full flex-1 bg-transparent border-none focus:ring-0 resize-none font-body-lg text-body-lg text-on-surface placeholder:text-outline/60 outline-none" id="worryInput" maxlength="500" placeholder="오늘 어떤 고민이 있으신가요? 편하게 적어보세요..."></textarea>
+<div class="absolute bottom-6 right-6 flex items-center justify-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant/70" id="charCount">
+                    0/500
+                </span>
+</div>
+</div>
+</main>
+<!-- Fixed Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full z-40 bg-gradient-to-t from-surface via-surface to-transparent pt-8 pb-6 px-margin-sm max-w-container-max-width left-1/2 -translate-x-1/2">
+<button class="w-full h-12 md:h-14 bg-primary text-on-primary rounded-full font-title-md text-title-md flex items-center justify-center hover:bg-surface-tint transition-all active:scale-95 shadow-md">
+            던지기
+        </button>
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('worryInput');
+            const charCount = document.getElementById('charCount');
+
+            textarea.addEventListener('input', () => {
+                const currentLength = textarea.value.length;
+                charCount.textContent = `${currentLength}/500`;
+            });
+            
+            // Auto focus on load for immediate writing
+            textarea.focus();
+        });
+    </script>
+</body></html>

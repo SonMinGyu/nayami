@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registration Success - Nayami</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&amp;family=Be+Vietnam+Pro:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#87736c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#54433d",
+                        "tertiary-container": "#a28f80",
+                        "on-background": "#1b1c1a",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#6f3800",
+                        "inverse-on-surface": "#f2f0ed",
+                        "on-primary-fixed": "#380d00",
+                        "secondary-fixed": "#ffdcc4",
+                        "on-tertiary-container": "#36291e",
+                        "secondary-container": "#ffab69",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#25190f",
+                        "tertiary-fixed-dim": "#d8c3b3",
+                        "tertiary-fixed": "#f5dece",
+                        "surface-dim": "#dbdad6",
+                        "on-primary-fixed-variant": "#753319",
+                        "primary-container": "#d27c5c",
+                        "surface-container-low": "#f5f3ef",
+                        "primary-fixed": "#ffdbcf",
+                        "on-secondary-container": "#783d01",
+                        "surface-container-highest": "#e4e2de",
+                        "surface-bright": "#fbf9f5",
+                        "inverse-surface": "#30312e",
+                        "primary": "#934a2e",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1c1a",
+                        "on-secondary-fixed": "#2f1400",
+                        "background": "#fbf9f5",
+                        "surface-container-high": "#eae8e4",
+                        "primary-fixed-dim": "#ffb59b",
+                        "surface-variant": "#e4e2de",
+                        "on-tertiary-fixed-variant": "#534438",
+                        "on-primary-container": "#511902",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb59b",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#ffb780",
+                        "surface": "#fbf9f5",
+                        "surface-container": "#efeeea",
+                        "tertiary": "#6c5b4e",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#934a2e",
+                        "secondary": "#8e4e14",
+                        "outline-variant": "#dac1ba",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-sm": "1rem",
+                        "section-padding": "80px",
+                        "container-max-width": "720px",
+                        "margin-xs": "0.5rem",
+                        "unit": "8px",
+                        "margin-md": "2rem",
+                        "margin-lg": "4rem",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "1.5", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #d27c5c;
+            border-radius: 50%;
+            opacity: 0;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-20px) scale(0); opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(100px) scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex items-center justify-center font-body-md overflow-hidden relative">
+<!-- Confetti Container -->
+<div class="absolute inset-0 z-[-1] pointer-events-none overflow-hidden fixed opacity-60" id="bg-image-layer"><img alt="Background image" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ugxm16ns6CzrqZTQxJA0p0a5P0vZX-wukPVisNqIpNTP6EJM51Z-NIJ6Uaxl2aSMB6KoP8yQufVLioR9xT3tYdShSesuIDEe4ooI09vPNbUpKja8GJFWGo_Fzz7J7TJIYOwtWp1bsFc41vD_Yh2qag-5g1esNLtVq9KVNFIdYihlm4bt0W5fDylYuR3PedIlWMFvrOQmjpR6NBO87L2xWtcjn1Ywyy_miFGJrTWVeZK-l8gexIwiMot8UY"/></div>
+<!-- Main Content Container -->
+<main class="w-full max-w-container-max-width mx-auto px-margin-sm md:px-margin-md flex flex-col items-center justify-center text-center z-10 relative">
+<!-- Illustration -->
+<div class="mb-margin-lg relative">
+<div class="w-48 h-48 md:w-64 md:h-64 rounded-full bg-surface-container flex items-center justify-center shadow-[0_20px_40px_rgba(147,74,46,0.08)] animate-float">
+<span class="material-symbols-outlined text-[80px] md:text-[100px] text-primary" data-icon="send" style="font-variation-settings: 'FILL' 0;">
+                    send
+                </span>
+<!-- Subtle decorative dots -->
+<div class="absolute -top-4 -right-4 w-3 h-3 bg-primary-fixed rounded-full opacity-60"></div>
+<div class="absolute bottom-8 -left-6 w-2 h-2 bg-secondary-container rounded-full opacity-50"></div>
+<div class="absolute top-1/2 -right-8 w-1.5 h-1.5 bg-outline rounded-full opacity-40"></div>
+</div>
+</div>
+<!-- Typography -->
+<div class="flex flex-col gap-unit mb-margin-lg max-w-md mx-auto">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">
+                고민이 전달됐어요
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                누군가 읽고 답변을 보내드릴 거예요.<br class="hidden md:block"/> 이메일을 확인해보세요 :)
+            </p>
+</div>
+<!-- Action Button -->
+<button class="bg-primary text-on-primary font-title-md text-title-md py-4 px-8 rounded-full shadow-[0_8px_20px_rgba(147,74,46,0.15)] hover:shadow-[0_12px_24px_rgba(147,74,46,0.2)] hover:-translate-y-0.5 transition-all duration-300 ease-out min-w-[200px]">
+            메인으로 돌아가기
+        </button>
+</main>
+<script>
+        // Simple confetti effect for celebration
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#934a2e', '#ffab69', '#d8c3b3', '#d27c5c']; // theme colors
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti-piece');
+                    
+                    // Random positioning and styling
+                    const left = Math.random() * 100;
+                    const top = Math.random() * 50 + 20; // top half of screen
+                    const size = Math.random() * 6 + 4;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const delay = Math.random() * 1.5;
+                    
+                    confetti.style.left = `${left}%`;
+                    confetti.style.top = `${top}%`;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    confetti.style.backgroundColor = color;
+                    confetti.style.animationDelay = `${delay}s`;
+                    
+                    container.appendChild(confetti);
+                }, i * 50);
+            }
+        });
+    </script>
+</body></html>
