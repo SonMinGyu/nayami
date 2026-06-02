@@ -16,12 +16,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const restoreSession = async () => {
       try {
         const res = await fetch('/api/refresh', { method: 'POST' });
-        if (res.ok) {
-          const { accessToken } = await res.json();
-          setAccessToken(accessToken);
-          // accessToken이 Zustand에 저장된 후 /me를 호출해야 interceptor가 토큰을 첨부한다
+        if (!res.ok) return;
+
+        const { accessToken } = await res.json();
+        setAccessToken(accessToken);
+
+        // accessToken이 Zustand에 저장된 후 /me를 호출해야 interceptor가 토큰을 첨부한다.
+        // /me 실패 시에도 로그인 상태(accessToken)는 유지한다.
+        try {
           const { nickname } = await getMe();
           setNickname(nickname);
+        } catch {
+          // 닉네임 조회 실패는 치명적이지 않으므로 조용히 무시
         }
       } catch {
         // refreshToken 쿠키 없음 → 비로그인 상태로 유지
