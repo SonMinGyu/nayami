@@ -28,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
   private static final String OTP_PREFIX = "otp:";
-  private static final String OTP_COOLDOWN_PREFIX = "otp-cooldown:";
+  // 회원가입·로그인 쿨다운을 분리해 한쪽 OTP 발송이 다른 쪽을 차단하지 않도록 한다.
+  private static final String SIGNUP_OTP_COOLDOWN_PREFIX = "signup-otp-cooldown:";
+  private static final String LOGIN_OTP_COOLDOWN_PREFIX = "login-otp-cooldown:";
   private static final String EMAIL_VERIFIED_PREFIX = "email-verified:";
   private static final String REFRESH_PREFIX = "refresh:";
   private static final String BLACKLIST_PREFIX = "blacklist:";
@@ -51,8 +53,8 @@ public class AuthService {
     if (userRepository.existsByEmail(request.email())) {
       throw new ConflictException("이미 가입된 이메일입니다.");
     }
-    checkCooldown(request.email());
-    String otp = generateAndSaveOtp(request.email());
+    checkCooldown(SIGNUP_OTP_COOLDOWN_PREFIX, request.email());
+    String otp = generateAndSaveOtp(SIGNUP_OTP_COOLDOWN_PREFIX, request.email());
     mailService.sendSignupOtp(request.email(), otp);
   }
 
@@ -94,8 +96,8 @@ public class AuthService {
     // 미가입 이메일에는 OTP를 발송하지 않도록 존재 여부를 먼저 확인한다.
     userRepository.findByEmail(request.email())
         .orElseThrow(() -> new NotFoundException("가입되지 않은 이메일입니다."));
-    checkCooldown(request.email());
-    String otp = generateAndSaveOtp(request.email());
+    checkCooldown(LOGIN_OTP_COOLDOWN_PREFIX, request.email());
+    String otp = generateAndSaveOtp(LOGIN_OTP_COOLDOWN_PREFIX, request.email());
     mailService.sendLoginOtp(request.email(), otp);
   }
 
@@ -134,17 +136,17 @@ public class AuthService {
   }
 
   // OTP 재전송 간격(3분)을 초과하지 않았는지 확인한다.
-  private void checkCooldown(String email) {
-    if (Boolean.TRUE.equals(redisTemplate.hasKey(OTP_COOLDOWN_PREFIX + email))) {
+  private void checkCooldown(String cooldownPrefix, String email) {
+    if (Boolean.TRUE.equals(redisTemplate.hasKey(cooldownPrefix + email))) {
       throw new TooManyRequestsException("이미 발송된 OTP가 있습니다. 잠시 후 다시 시도해주세요.");
     }
   }
 
   // 6자리 OTP를 생성하고 유효기간(5분), 재전송 제한(3분)과 함께 Redis에 저장한다.
-  private String generateAndSaveOtp(String email) {
+  private String generateAndSaveOtp(String cooldownPrefix, String email) {
     String otp = String.format("%06d", secureRandom.nextInt(1_000_000));
     redisTemplate.opsForValue().set(OTP_PREFIX + email, otp, OTP_TTL_SECONDS, TimeUnit.SECONDS);
-    redisTemplate.opsForValue().set(OTP_COOLDOWN_PREFIX + email, "true", OTP_COOLDOWN_SECONDS, TimeUnit.SECONDS);
+    redisTemplate.opsForValue().set(cooldownPrefix + email, "true", OTP_COOLDOWN_SECONDS, TimeUnit.SECONDS);
     return otp;
   }
 
