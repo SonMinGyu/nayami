@@ -14,7 +14,7 @@ public class MailService {
 
   private final JavaMailSender mailSender;
 
-  @Value("${spring.mail.username}")
+  @Value("${spring.mail.from}")
   private String fromEmail;
 
   public void sendSignupOtp(String toEmail, String otp) {
