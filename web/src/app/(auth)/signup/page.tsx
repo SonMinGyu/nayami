@@ -50,22 +50,19 @@ export default function SignupPage() {
   const [nicknameStatus, setNicknameStatus] = useState<'idle' | 'available' | 'taken'>('idle');
   const [loading, setLoading] = useState(false);
 
-  // 페이지 복귀 시 남은 쿨다운 시간 계산
-  const savedSession = typeof window !== 'undefined' ? loadOtpSession() : null;
-  const initialRemaining = savedSession
-    ? Math.max(0, 180 - Math.floor((Date.now() - savedSession.sentAt) / 1000))
-    : undefined;
+  const { remaining, reset: resetTimer, canResend, restore } = useOtpTimer();
 
-  const { remaining, reset: resetTimer, canResend } = useOtpTimer(initialRemaining);
-
-  // 유효한 OTP 세션이 있으면 OTP 단계로 복원
+  // 유효한 OTP 세션이 있으면 이메일·단계·타이머를 복원한다.
+  // sessionStorage 접근은 클라이언트에서만 가능하므로 useEffect 안에서 처리한다.
   useEffect(() => {
     const session = loadOtpSession();
     if (session) {
       setEmail(session.email);
       setStep('otp');
+      const elapsed = Math.floor((Date.now() - session.sentAt) / 1000);
+      restore(180 - elapsed);
     }
-  }, []);
+  }, [restore]);
 
   /** 이메일 형식 검사 */
   const validateEmail = (value: string): boolean => {
