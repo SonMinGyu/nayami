@@ -25,9 +25,10 @@ OTP 기반 이메일 인증으로 회원가입/로그인하고, 고민을 익명
 ```
 web/
 ├── src/
+│   ├── proxy.ts                          # 라우트 보호 (인증 필요 경로 접근 제어)
 │   ├── app/
 │   │   ├── layout.tsx
-│   │   ├── page.tsx
+│   │   ├── page.tsx                      # 랜딩 페이지
 │   │   ├── api/                          # Next.js Route Handlers
 │   │   │   ├── set-token/route.ts        # refreshToken httpOnly 쿠키 설정
 │   │   │   ├── clear-token/route.ts      # refreshToken 쿠키 삭제 (로그아웃)
@@ -38,33 +39,37 @@ web/
 │   │   │   └── signup/page.tsx
 │   │   └── (main)/                       # 메인 라우트 그룹 (인증 필요)
 │   │       ├── layout.tsx
-│   │       ├── home/page.tsx             # 랜덤 고민 조회 + 답변
-│   │       └── post/page.tsx             # 내 고민 등록
+│   │       ├── home/page.tsx             # 홈 (고민 던지기 / 고민 들어주기 메뉴)
+│   │       ├── post/page.tsx             # 내 고민 등록
+│   │       └── reply/page.tsx            # 랜덤 고민 조회 + 답변
 │   ├── components/
 │   │   ├── ui/                           # shadcn/ui 자동 생성 컴포넌트
-│   │   ├── auth/                         # 인증 관련 컴포넌트
-│   │   ├── concern/                      # 고민 관련 컴포넌트
-│   │   └── reply/                        # 답변 관련 컴포넌트
+│   │   ├── auth/
+│   │   │   └── OtpInput.tsx              # 6자리 OTP 입력 컴포넌트
+│   │   └── WatercolorBackground.tsx      # 워터컬러 배경 이미지 레이어
 │   ├── hooks/
-│   │   ├── useAuth.ts
-│   │   ├── useConcern.ts
-│   │   └── useReply.ts
+│   │   └── useOtpTimer.ts                # OTP 재전송 타이머 (180초)
 │   ├── lib/
 │   │   ├── api/
 │   │   │   ├── client.ts                 # axios 인스턴스 + interceptor
 │   │   │   ├── auth.ts                   # 인증 API 함수
 │   │   │   ├── concern.ts                # 고민 API 함수
-│   │   │   └── reply.ts                  # 답변 API 함수
+│   │   │   ├── reply.ts                  # 답변 API 함수
+│   │   │   └── user.ts                   # 사용자 API 함수 (GET /api/users/me)
+│   │   ├── constants.ts                  # 이미지 경로 등 상수
 │   │   └── utils.ts                      # cn() 유틸
 │   ├── providers/
 │   │   ├── QueryProvider.tsx             # TanStack Query Provider
-│   │   └── AuthProvider.tsx             # 앱 로드 시 토큰 자동 복구
+│   │   └── AuthProvider.tsx              # 앱 로드 시 토큰·닉네임 자동 복구
 │   ├── store/
-│   │   └── authStore.ts                  # Zustand (accessToken 메모리 보관)
+│   │   └── authStore.ts                  # Zustand (accessToken·nickname 메모리 보관)
 │   └── types/
 │       ├── auth.ts
 │       ├── concern.ts
-│       └── reply.ts
+│       ├── reply.ts
+│       └── user.ts
+├── public/
+│   └── images/                           # 앱에서 사용하는 이미지 에셋
 ├── .env.local
 ├── .env.example
 └── CLAUDE.md
