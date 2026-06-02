@@ -5,8 +5,10 @@ import { persist } from 'zustand/middleware';
 
 interface AuthState {
   accessToken: string | null;
+  nickname: string | null;
   isAuthenticated: boolean;
   setAccessToken: (token: string) => void;
+  setNickname: (nickname: string) => void;
   clearAuth: () => void;
 }
 
@@ -20,14 +22,18 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       accessToken: null,
+      nickname: null,
       isAuthenticated: false,
 
       /** accessToken을 메모리에 저장하고 인증 상태를 true로 설정한다. */
       setAccessToken: (token: string) =>
         set({ accessToken: token, isAuthenticated: true }),
 
-      /** accessToken을 메모리에서 제거하고 인증 상태를 false로 설정한다. */
-      clearAuth: () => set({ accessToken: null, isAuthenticated: false }),
+      /** 닉네임을 메모리에 저장한다. */
+      setNickname: (nickname: string) => set({ nickname }),
+
+      /** accessToken과 닉네임을 메모리에서 제거하고 인증 상태를 false로 설정한다. */
+      clearAuth: () => set({ accessToken: null, nickname: null, isAuthenticated: false }),
     }),
     {
       name: 'nayami-auth',
