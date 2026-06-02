@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { OtpInput } from '@/components/auth/OtpInput';
@@ -12,6 +12,31 @@ import axios from 'axios';
 
 type Step = 'email' | 'otp';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SESSION_KEY = 'login_otp_session';
+const OTP_TTL_MS = 5 * 60 * 1000; // 서버 OTP 유효기간 5분
+
+interface OtpSession {
+  email: string;
+  sentAt: number;
+}
+
+/** sessionStorage에서 유효한 OTP 세션을 읽는다. */
+function loadOtpSession(): OtpSession | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const session: OtpSession = JSON.parse(raw);
+    if (Date.now() - session.sentAt > OTP_TTL_MS) {
+      sessionStorage.removeItem(SESSION_KEY);
+      return null;
+    }
+    return session;
+  } catch {
+    return null;
+  }
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
@@ -19,17 +44,48 @@ export default function LoginPage() {
 
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { remaining, reset: resetTimer, canResend } = useOtpTimer();
+  // 페이지 복귀 시 남은 쿨다운 시간 계산
+  const savedSession = typeof window !== 'undefined' ? loadOtpSession() : null;
+  const initialRemaining = savedSession
+    ? Math.max(0, 180 - Math.floor((Date.now() - savedSession.sentAt) / 1000))
+    : undefined;
+
+  const { remaining, reset: resetTimer, canResend } = useOtpTimer(initialRemaining);
+
+  // 유효한 OTP 세션이 있으면 OTP 단계로 복원
+  useEffect(() => {
+    const session = loadOtpSession();
+    if (session) {
+      setEmail(session.email);
+      setStep('otp');
+    }
+  }, []);
+
+  /** 이메일 형식 검사 */
+  const validateEmail = (value: string): boolean => {
+    if (!value) {
+      setEmailError('이메일을 입력해주세요.');
+      return false;
+    }
+    if (!EMAIL_REGEX.test(value)) {
+      setEmailError('올바른 이메일 형식이 아닙니다.');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
 
   /** OTP 이메일 발송 */
   const handleSendOtp = async () => {
-    if (!email) return;
+    if (!validateEmail(email)) return;
     setLoading(true);
     try {
       await sendLoginOtp({ email });
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, sentAt: Date.now() }));
       resetTimer();
       setStep('otp');
     } catch (err) {
@@ -58,6 +114,7 @@ export default function LoginPage() {
       });
       const userInfo = await getMe();
       setNickname(userInfo.nickname);
+      sessionStorage.removeItem(SESSION_KEY);
       router.push('/home');
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -71,6 +128,7 @@ export default function LoginPage() {
 
   const handleBack = () => {
     if (step === 'otp') {
+      sessionStorage.removeItem(SESSION_KEY);
       setStep('email');
       setOtp('');
     } else {
@@ -107,16 +165,22 @@ export default function LoginPage() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                onBlur={() => email && validateEmail(email)}
                 placeholder="이메일 주소"
                 onKeyDown={(e) => e.key === 'Enter' && handleSendOtp()}
-                className="w-full bg-surface-container-lowest border-2 border-outline/50 rounded-xl px-4 py-4 font-body-lg text-body-lg text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary transition-colors bg-white shadow-sm"
+                className={`w-full bg-surface-container-lowest border-2 rounded-xl px-4 py-4 font-body-lg text-body-lg text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none transition-colors bg-white shadow-sm ${
+                  emailError ? 'border-error focus:border-error' : 'border-outline/50 focus:border-primary'
+                }`}
               />
+              {emailError && (
+                <p className="mt-2 font-label-sm text-label-sm text-error flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px]">error</span>
+                  {emailError}
+                </p>
+              )}
               <div className="mt-margin-lg flex justify-center opacity-70 pointer-events-none">
-                <span
-                  className="material-symbols-outlined text-tertiary-container"
-                  style={{ fontSize: 64, fontVariationSettings: "'FILL' 0, 'wght' 200" }}
-                >
+                <span className="material-symbols-outlined text-tertiary-container" style={{ fontSize: 64, fontVariationSettings: "'FILL' 0, 'wght' 200" }}>
                   mail
                 </span>
               </div>
@@ -131,7 +195,7 @@ export default function LoginPage() {
                 코드를 입력해주세요
               </h1>
               <p className="font-body-md text-body-md text-on-surface-variant">
-                이메일로 전송된 6자리 코드를 입력해주세요
+                <span className="font-medium text-primary">{email}</span>로 전송된 6자리 코드를 입력해주세요
               </p>
             </div>
             <div className="flex flex-col items-start w-full">

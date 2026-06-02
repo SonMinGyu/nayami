@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { OtpInput } from '@/components/auth/OtpInput';
@@ -12,6 +12,31 @@ import axios from 'axios';
 
 type Step = 'email' | 'otp' | 'nickname';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SESSION_KEY = 'signup_otp_session';
+const OTP_TTL_MS = 5 * 60 * 1000; // 서버 OTP 유효기간 5분
+
+interface OtpSession {
+  email: string;
+  sentAt: number;
+}
+
+/** sessionStorage에서 유효한 OTP 세션을 읽는다. */
+function loadOtpSession(): OtpSession | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const session: OtpSession = JSON.parse(raw);
+    if (Date.now() - session.sentAt > OTP_TTL_MS) {
+      sessionStorage.removeItem(SESSION_KEY);
+      return null;
+    }
+    return session;
+  } catch {
+    return null;
+  }
+}
+
 export default function SignupPage() {
   const router = useRouter();
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
@@ -19,19 +44,50 @@ export default function SignupPage() {
 
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [otp, setOtp] = useState('');
   const [nickname, setNickname] = useState('');
   const [nicknameStatus, setNicknameStatus] = useState<'idle' | 'available' | 'taken'>('idle');
   const [loading, setLoading] = useState(false);
 
-  const { remaining, reset: resetTimer, canResend } = useOtpTimer();
+  // 페이지 복귀 시 남은 쿨다운 시간 계산
+  const savedSession = typeof window !== 'undefined' ? loadOtpSession() : null;
+  const initialRemaining = savedSession
+    ? Math.max(0, 180 - Math.floor((Date.now() - savedSession.sentAt) / 1000))
+    : undefined;
+
+  const { remaining, reset: resetTimer, canResend } = useOtpTimer(initialRemaining);
+
+  // 유효한 OTP 세션이 있으면 OTP 단계로 복원
+  useEffect(() => {
+    const session = loadOtpSession();
+    if (session) {
+      setEmail(session.email);
+      setStep('otp');
+    }
+  }, []);
+
+  /** 이메일 형식 검사 */
+  const validateEmail = (value: string): boolean => {
+    if (!value) {
+      setEmailError('이메일을 입력해주세요.');
+      return false;
+    }
+    if (!EMAIL_REGEX.test(value)) {
+      setEmailError('올바른 이메일 형식이 아닙니다.');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
 
   /** OTP 이메일 발송 */
   const handleSendOtp = async () => {
-    if (!email) return;
+    if (!validateEmail(email)) return;
     setLoading(true);
     try {
       await sendSignupOtp({ email });
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email, sentAt: Date.now() }));
       resetTimer();
       setStep('otp');
     } catch (err) {
@@ -88,6 +144,7 @@ export default function SignupPage() {
       });
       const userInfo = await getMe();
       storeNickname(userInfo.nickname);
+      sessionStorage.removeItem(SESSION_KEY);
       router.push('/home');
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -102,9 +159,14 @@ export default function SignupPage() {
   };
 
   const handleBack = () => {
-    if (step === 'otp') setStep('email');
-    else if (step === 'nickname') setStep('otp');
-    else router.push('/');
+    if (step === 'otp') {
+      sessionStorage.removeItem(SESSION_KEY);
+      setStep('email');
+    } else if (step === 'nickname') {
+      setStep('otp');
+    } else {
+      router.push('/');
+    }
   };
 
   return (
@@ -135,11 +197,20 @@ export default function SignupPage() {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+              onBlur={() => email && validateEmail(email)}
               placeholder="email@example.com"
               onKeyDown={(e) => e.key === 'Enter' && handleSendOtp()}
-              className="w-full bg-surface-container-lowest border border-outline/40 rounded-xl px-4 py-4 font-body-md text-body-md text-on-background placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
+              className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-4 font-body-md text-body-md text-on-background placeholder:text-outline focus:outline-none focus:ring-1 transition-all shadow-sm ${
+                emailError ? 'border-error focus:border-error focus:ring-error' : 'border-outline/40 focus:border-primary focus:ring-primary'
+              }`}
             />
+            {emailError && (
+              <p className="mt-2 font-label-sm text-label-sm text-error flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">error</span>
+                {emailError}
+              </p>
+            )}
           </>
         )}
 
@@ -150,7 +221,7 @@ export default function SignupPage() {
                 이메일을 확인해주세요
               </h1>
               <p className="font-body-md text-body-md text-on-surface-variant">
-                6자리 코드를 보냈어요
+                <span className="font-medium text-primary">{email}</span>로 6자리 코드를 보냈어요
               </p>
             </div>
             <div className="flex flex-col items-start w-full">
@@ -161,9 +232,7 @@ export default function SignupPage() {
                 <span>코드를 못 받으셨나요?</span>
                 <button
                   disabled={!canResend}
-                  onClick={async () => {
-                    await handleSendOtp();
-                  }}
+                  onClick={handleSendOtp}
                   className="text-primary font-medium hover:underline disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   재전송
@@ -192,10 +261,7 @@ export default function SignupPage() {
               <input
                 type="text"
                 value={nickname}
-                onChange={(e) => {
-                  setNickname(e.target.value);
-                  setNicknameStatus('idle');
-                }}
+                onChange={(e) => { setNickname(e.target.value); setNicknameStatus('idle'); }}
                 onBlur={handleNicknameCheck}
                 placeholder="닉네임 입력"
                 className={`w-full bg-surface-container-lowest rounded-lg px-4 py-4 font-body-lg text-body-lg text-on-background placeholder:text-on-surface-variant/50 transition-all duration-200 focus:outline-none border ${
@@ -207,23 +273,16 @@ export default function SignupPage() {
                 }`}
               />
               {nicknameStatus !== 'idle' && (
-                <div
-                  className={`flex items-center gap-1 font-label-sm text-label-sm ${
-                    nicknameStatus === 'available' ? 'text-green-600' : 'text-error'
-                  }`}
-                >
+                <div className={`flex items-center gap-1 font-label-sm text-label-sm ${nicknameStatus === 'available' ? 'text-green-600' : 'text-error'}`}>
                   <span className="material-symbols-outlined text-[16px]">
                     {nicknameStatus === 'available' ? 'check_circle' : 'error'}
                   </span>
                   <span>
-                    {nicknameStatus === 'available'
-                      ? '사용 가능한 닉네임입니다'
-                      : '이미 사용 중인 닉네임입니다'}
+                    {nicknameStatus === 'available' ? '사용 가능한 닉네임입니다' : '이미 사용 중인 닉네임입니다'}
                   </span>
                 </div>
               )}
             </div>
-            {/* 장식 아이콘 */}
             <div className="flex-1 min-h-[100px] flex items-center justify-center mt-margin-md opacity-20 pointer-events-none">
               <span className="material-symbols-outlined text-6xl text-primary">mail</span>
             </div>
