@@ -42,15 +42,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
           {/* 계정 버튼 → 드롭다운 메뉴 */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                aria-label="계정 메뉴"
-                className="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-highest transition-colors"
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 28 }}>
-                  account_circle
-                </span>
-              </button>
+            <DropdownMenuTrigger
+              aria-label="계정 메뉴"
+              className="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-highest transition-colors"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 28 }}>
+                account_circle
+              </span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
               <DropdownMenuItem
