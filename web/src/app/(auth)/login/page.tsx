@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { OtpInput } from '@/components/auth/OtpInput';
 import { useAuthStore } from '@/store/authStore';
 import { sendLoginOtp, verifyLoginOtp } from '@/lib/api/auth';
+import { getMe } from '@/lib/api/user';
 import { useOtpTimer } from '@/hooks/useOtpTimer';
 import axios from 'axios';
 
@@ -14,6 +15,7 @@ type Step = 'email' | 'otp';
 export default function LoginPage() {
   const router = useRouter();
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
+  const setNickname = useAuthStore((s) => s.setNickname);
 
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
@@ -54,6 +56,8 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken: tokens.refreshToken }),
       });
+      const userInfo = await getMe();
+      setNickname(userInfo.nickname);
       router.push('/home');
     } catch (err) {
       if (axios.isAxiosError(err)) {
