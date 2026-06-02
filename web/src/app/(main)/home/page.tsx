@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 
 export default function HomePage() {
   const router = useRouter();
+  const nickname = useAuthStore((s) => s.nickname);
 
   return (
     <div className="max-w-container-max-width mx-auto pt-12 pb-8 px-margin-sm md:px-margin-md flex flex-col items-center">
@@ -11,7 +13,7 @@ export default function HomePage() {
       <section className="w-full text-center mb-margin-lg mt-margin-md">
         <h1 className="font-display-lg text-display-lg text-on-surface mb-2">
           안녕하세요,{' '}
-          <span className="text-primary">익명</span>님
+          <span className="text-primary">{nickname ?? '익명'}</span>님
         </h1>
         <p className="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">
           오늘 하루도 수고 많으셨어요.

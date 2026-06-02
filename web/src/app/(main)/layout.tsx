@@ -38,7 +38,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <header className="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md">
         <div className="max-w-container-max-width mx-auto px-margin-sm h-16 flex justify-between items-center">
           <div className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight">
-            Nayami
+            나야미
           </div>
           <button
             onClick={handleLogout}
