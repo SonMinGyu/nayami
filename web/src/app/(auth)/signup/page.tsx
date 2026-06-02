@@ -15,7 +15,7 @@ type Step = 'email' | 'otp' | 'nickname';
 export default function SignupPage() {
   const router = useRouter();
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
-  const setNickname = useAuthStore((s) => s.setNickname);
+  const storeNickname = useAuthStore((s) => s.setNickname);
 
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
@@ -87,7 +87,7 @@ export default function SignupPage() {
         body: JSON.stringify({ refreshToken: tokens.refreshToken }),
       });
       const userInfo = await getMe();
-      setNickname(userInfo.nickname);
+      storeNickname(userInfo.nickname);
       router.push('/home');
     } catch (err) {
       if (axios.isAxiosError(err)) {
